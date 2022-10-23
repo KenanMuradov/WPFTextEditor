@@ -1,0 +1,372 @@
+﻿<Window x:Class="WPFTextEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFTextEditor" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="KepaTextEditor" 
+        Height="450" Width="800"
+        WindowStyle="SingleBorderWindow" 
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded" Icon="/icons8-text-editor-64.png">
+
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Black" Offset="1"/>
+            <GradientStop Color="#FF2C9DD8" Offset="0"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Window.Resources>
+        <RoutedUICommand x:Key="CopyCommand"/>
+        <RoutedUICommand x:Key="PasteCommand"/>
+        <RoutedUICommand x:Key="CutCommand"/>
+        <RoutedUICommand x:Key="SelectAllCommand"/>
+    </Window.Resources>
+
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource CopyCommand}" Executed="CopyMethod"/>
+        <CommandBinding Command="{StaticResource CutCommand}"  Executed="CutMethod"/>
+        <CommandBinding Command="{StaticResource PasteCommand}"  Executed="PasteMethod"/>
+        <CommandBinding Command="{StaticResource SelectAllCommand}"  Executed="SelectAllMethod"/>
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="{StaticResource CopyCommand}" />
+        <KeyBinding Key="X" Modifiers="Ctrl" Command="{StaticResource CutCommand}" />
+        <KeyBinding Key="V" Modifiers="Ctrl" Command="{StaticResource PasteCommand}" />
+        <KeyBinding Key="A" Modifiers="Ctrl" Command="{StaticResource SelectAllCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="White" Offset="0.23"/>
+                <GradientStop Color="#FF2C9DD8" Offset="0"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+
+
+        <TabControl Grid.ColumnSpan="2" BorderThickness="0">
+            <TabControl.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Black" Offset="1"/>
+                    <GradientStop Color="#FF2C9DD8" Offset="0"/>
+                </LinearGradientBrush>
+            </TabControl.Background>
+
+
+            <TabItem FontSize="15" Header="File" Background="#FF5691D2" Foreground="FloralWhite">
+
+                <Grid>
+                    <Grid.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Black" Offset="1"/>
+                            <GradientStop Color="#FF2C9DD8" Offset="0"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="1" >
+
+                        <Button 
+                            Name="btnFileLoad" 
+                            DockPanel.Dock="Right" 
+                            Margin="3" 
+                            Background="Transparent"
+                            Foreground="FloralWhite"
+                            Click="btnFileLoad_Click"
+                            >Load
+                        </Button>
+
+                        <xctk:WatermarkTextBox Name="txtFileLoad" DockPanel.Dock="Left" Margin="3" Background="Transparent" Foreground="FloralWhite">
+                            <xctk:WatermarkTextBox.Watermark>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Enter Load Path" Foreground="FloralWhite"/>
+                                </StackPanel>
+                            </xctk:WatermarkTextBox.Watermark>
+                        </xctk:WatermarkTextBox>
+
+                    </DockPanel>
+
+
+
+                    <DockPanel >
+                        <Button 
+                            Name="btnFileSave" 
+                            DockPanel.Dock="Right" 
+                            Margin="3" 
+                            Background="Transparent"
+                            Foreground="FloralWhite"
+                            Click="btnFileSave_Click"
+                            >Save
+                        </Button>
+
+                        <xctk:WatermarkTextBox Name="txtFileSave" DockPanel.Dock="Left" Margin="3" Background="Transparent" Foreground="FloralWhite">
+                            <xctk:WatermarkTextBox.Watermark>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Enter File Name"  Foreground="FloralWhite"/>
+                                </StackPanel>
+                            </xctk:WatermarkTextBox.Watermark>
+                        </xctk:WatermarkTextBox>
+
+                    </DockPanel>
+
+                    <Button 
+                        Name="btnFileDialog"
+                        Background="Transparent"
+                        Foreground="FloralWhite"
+                        Grid.Column="1"
+                        FontSize="20"
+                        Margin="3,3,3,3"
+                        Click="btnFileDialog_Click">Open File
+                    </Button>
+
+                    <Button 
+                        Name="btnSaveDialog"
+                        Background="Transparent"
+                        Foreground="FloralWhite"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        FontSize="20"
+                        Margin="3,3,3,3"
+                        Click="btnSaveDialog_Click">Save File
+                    </Button>
+
+                    <CheckBox 
+                        Name="chkAutoSave"
+                        Grid.Column="3"
+                        Grid.RowSpan="2"
+                        FontSize="20"
+                        Foreground="FloralWhite"
+                        VerticalAlignment="Top" 
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center" 
+                        Margin="0,21,0,0"
+                        Checked="chkAutoSave_Checked">AutoSave</CheckBox>
+
+
+                </Grid>
+
+            </TabItem>
+
+            <TabItem FontSize="15" Header="Color" Background="#FF5691D2" Foreground="FloralWhite">
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Foreground="FloralWhite" HorizontalAlignment="Center">Text Color</Label>
+                    <Label Foreground="FloralWhite" Grid.Column="1" HorizontalAlignment="Center">BackGround Color</Label>
+                    <Label Foreground="FloralWhite" Grid.Column="2" HorizontalAlignment="Center">HighLight Color</Label>
+
+
+                    <xctk:ColorPicker 
+                        Foreground="FloralWhite"
+                        Background="Transparent"
+                        Name="cpTextColor"
+                        Margin="3"
+                        Grid.Row="1"
+                        SelectedColorChanged="cpTextColor_SelectedColorChanged">
+                    </xctk:ColorPicker>
+
+
+                    <xctk:ColorPicker 
+                        Foreground="FloralWhite"
+                        Background="Transparent"
+                        Name="cpBackColor"
+                        Margin="3"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        SelectedColorChanged="cpBackColor_SelectedColorChanged">
+                    </xctk:ColorPicker>
+
+                    <xctk:ColorPicker 
+                        Foreground="FloralWhite"
+                        Background="Transparent"
+                        Name="cpHighLightColor"
+                        Margin="3"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        SelectedColorChanged="cpHighLightColor_SelectedColorChanged">
+                    </xctk:ColorPicker>
+
+
+                </Grid>
+            </TabItem>
+
+            <TabItem FontSize="15" Header="Text" Background="#FF5691D2" Foreground="FloralWhite">
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Foreground="FloralWhite" HorizontalAlignment="Left" Grid.Column="1" Margin="33,0,0,0">Font</Label>
+                    <Label Foreground="FloralWhite" Grid.Column="2" HorizontalAlignment="Center">Font Size</Label>
+                    <Label Foreground="FloralWhite" Grid.Column="3" HorizontalAlignment="Center">Font Style</Label>
+                    <Label Foreground="FloralWhite" Grid.Column="4" HorizontalAlignment="Center">Text Alignment</Label>
+
+
+
+                    <ComboBox
+                         Background="Transparent"
+                        Grid.Row="1"
+                        Name="cBoxFontStyle"
+                        FontSize="15"
+                        Margin="3,3,3,3"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center" 
+                        SelectionChanged="cBoxFontStyle_SelectionChanged" Grid.ColumnSpan="2">
+                    </ComboBox>
+
+                    <ComboBox
+                        Background="Transparent"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Name="cBoxFontSize"
+                        FontSize="15"
+                        Margin="3,3,3,3"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center" 
+                        SelectionChanged="cBoxFontSize_SelectionChanged">
+                    </ComboBox>
+
+                    <DockPanel
+                        Width="100"
+                        Grid.Column="3"
+                        Grid.Row="1">
+
+                        <Button
+                            DockPanel.Dock="Left"
+                        FontWeight="Bold"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Click="ButtonStyle_Click">B
+                        </Button>
+                        
+                        <Button 
+                            DockPanel.Dock="Right"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Click="ButtonStyle_Click">
+                            <Underline>U</Underline>
+                        </Button>
+                        
+                        <Button 
+                        Width="18"
+                        FontStyle="Italic"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Grid.Column="3"
+                        Grid.Row="1"
+                        Click="ButtonStyle_Click">I
+                        </Button>
+
+                        
+
+                    </DockPanel>
+
+
+                    <DockPanel
+                        Width="100"
+                        Grid.Column="4"
+                        Grid.Row="1">
+
+                        <Button 
+                            DockPanel.Dock="Left"
+                        FontSize="20"
+                        Width="18"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Grid.Column="4"
+                        Grid.Row="1"
+                        Click="ButtonAlignment_Click">L
+                        </Button>
+
+                        
+                        <Button 
+                            DockPanel.Dock="Right"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        Grid.Column="4"
+                        Grid.Row="1"
+                        Click="ButtonAlignment_Click">R
+                        </Button>
+                        
+                        <Button 
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Grid.Column="4"
+                        Grid.Row="1"
+                        Click="ButtonAlignment_Click">C
+                        </Button>
+
+
+                    </DockPanel>
+
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+
+        <TextBox 
+            
+            Name="txt" 
+            Grid.Row="1"  
+            FontSize="9"
+            Margin="10"
+            Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" TextChanged="txt_TextChanged">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="9"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+    </Grid>
+
+</Window>
