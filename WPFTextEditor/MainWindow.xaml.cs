@@ -118,8 +118,15 @@ namespace WPFTextEditor
 
         private void cpTextColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Windows.Media.Color?> e)
         {
+
+
             if (cpTextColor.SelectedColor is System.Windows.Media.Color color)
+            {
+                if(txt.SelectionLength>0)
+                    txt.SelectionTextBrush = new SolidColorBrush(color);
+
                 txt.Foreground = new SolidColorBrush(color);
+            }
         }
 
         private void cpBackColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Windows.Media.Color?> e)
@@ -161,6 +168,7 @@ namespace WPFTextEditor
                 txt.FontStyle = _isItalic ? FontStyles.Italic : FontStyles.Normal;
                 txt.TextDecorations = _isUnderLined ? TextDecorations.Underline : txt.TextDecorations = null;
             }
+
         }
 
         private void ButtonAlignment_Click(object sender, RoutedEventArgs e)
@@ -183,7 +191,7 @@ namespace WPFTextEditor
             if (_isAutoSaveUsed == false)
             {
 
-                var result = MessageBox.Show("Tour Text Will be automatically saved on Desktop with Name KepaText.txt \n Do you accept It?","Information",MessageBoxButton.YesNo,MessageBoxImage.Question);
+                var result = MessageBox.Show("Tour Text Will be automatically saved on Desktop with Name KepaText.txt \nDo you accept It?","Information",MessageBoxButton.YesNo,MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {

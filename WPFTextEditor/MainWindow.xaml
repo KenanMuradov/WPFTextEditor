@@ -236,7 +236,7 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Label Foreground="FloralWhite" HorizontalAlignment="Left" Grid.Column="1" Margin="33,0,0,0">Font</Label>
+                    <Label Foreground="FloralWhite" HorizontalAlignment="Center" Grid.ColumnSpan="2" >Font</Label>
                     <Label Foreground="FloralWhite" Grid.Column="2" HorizontalAlignment="Center">Font Size</Label>
                     <Label Foreground="FloralWhite" Grid.Column="3" HorizontalAlignment="Center">Font Style</Label>
                     <Label Foreground="FloralWhite" Grid.Column="4" HorizontalAlignment="Center">Text Alignment</Label>
@@ -244,25 +244,26 @@
 
 
                     <ComboBox
-                         Background="Transparent"
+                        Background="Transparent"
                         Grid.Row="1"
+                        Width="300"
+                        Grid.ColumnSpan="2"
                         Name="cBoxFontStyle"
                         FontSize="15"
                         Margin="3,3,3,3"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Center" 
-                        SelectionChanged="cBoxFontStyle_SelectionChanged" Grid.ColumnSpan="2">
+                        HorizontalContentAlignment="Center"
+                        SelectionChanged="cBoxFontStyle_SelectionChanged">
                     </ComboBox>
 
                     <ComboBox
                         Background="Transparent"
+                        Width="130"
                         Grid.Row="1"
                         Grid.Column="2"
                         Name="cBoxFontSize"
+                        HorizontalContentAlignment="Center"
                         FontSize="15"
                         Margin="3,3,3,3"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Center" 
                         SelectionChanged="cBoxFontSize_SelectionChanged">
                     </ComboBox>
 
@@ -367,6 +368,7 @@
                 </Style>
             </TextBox.Resources>
         </TextBox>
+
     </Grid>
 
 </Window>
