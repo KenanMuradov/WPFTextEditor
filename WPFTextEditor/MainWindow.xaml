@@ -357,7 +357,6 @@
 
 
         <TextBox 
-            
             Name="txt" 
             Grid.Row="1"  
             FontSize="9"

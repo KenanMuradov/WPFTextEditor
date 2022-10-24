@@ -149,6 +149,7 @@ namespace WPFTextEditor
         {
             if (sender is Button btn)
             {
+
                 switch (btn.Content.ToString())
                 {
                     case "B":
