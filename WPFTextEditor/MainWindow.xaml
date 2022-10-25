@@ -18,28 +18,6 @@
         </LinearGradientBrush>
     </Window.Background>
 
-    <Window.Resources>
-        <RoutedUICommand x:Key="CopyCommand"/>
-        <RoutedUICommand x:Key="PasteCommand"/>
-        <RoutedUICommand x:Key="CutCommand"/>
-        <RoutedUICommand x:Key="SelectAllCommand"/>
-    </Window.Resources>
-
-
-    <Window.CommandBindings>
-        <CommandBinding Command="{StaticResource CopyCommand}" Executed="CopyMethod"/>
-        <CommandBinding Command="{StaticResource CutCommand}"  Executed="CutMethod"/>
-        <CommandBinding Command="{StaticResource PasteCommand}"  Executed="PasteMethod"/>
-        <CommandBinding Command="{StaticResource SelectAllCommand}"  Executed="SelectAllMethod"/>
-    </Window.CommandBindings>
-
-    <Window.InputBindings>
-        <KeyBinding Key="C" Modifiers="Ctrl" Command="{StaticResource CopyCommand}" />
-        <KeyBinding Key="X" Modifiers="Ctrl" Command="{StaticResource CutCommand}" />
-        <KeyBinding Key="V" Modifiers="Ctrl" Command="{StaticResource PasteCommand}" />
-        <KeyBinding Key="A" Modifiers="Ctrl" Command="{StaticResource SelectAllCommand}" />
-    </Window.InputBindings>
-
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -52,6 +30,9 @@
             <RowDefinition Height="100"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
+
+
 
 
 
@@ -77,7 +58,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -85,56 +65,15 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <DockPanel Grid.Row="1" >
-
-                        <Button 
-                            Name="btnFileLoad" 
-                            DockPanel.Dock="Right" 
-                            Margin="3" 
-                            Background="Transparent"
-                            Foreground="FloralWhite"
-                            Click="btnFileLoad_Click"
-                            >Load
-                        </Button>
-
-                        <xctk:WatermarkTextBox Name="txtFileLoad" DockPanel.Dock="Left" Margin="3" Background="Transparent" Foreground="FloralWhite">
-                            <xctk:WatermarkTextBox.Watermark>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Enter Load Path" Foreground="FloralWhite"/>
-                                </StackPanel>
-                            </xctk:WatermarkTextBox.Watermark>
-                        </xctk:WatermarkTextBox>
-
-                    </DockPanel>
 
 
 
-                    <DockPanel >
-                        <Button 
-                            Name="btnFileSave" 
-                            DockPanel.Dock="Right" 
-                            Margin="3" 
-                            Background="Transparent"
-                            Foreground="FloralWhite"
-                            Click="btnFileSave_Click"
-                            >Save
-                        </Button>
 
-                        <xctk:WatermarkTextBox Name="txtFileSave" DockPanel.Dock="Left" Margin="3" Background="Transparent" Foreground="FloralWhite">
-                            <xctk:WatermarkTextBox.Watermark>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Enter File Name"  Foreground="FloralWhite"/>
-                                </StackPanel>
-                            </xctk:WatermarkTextBox.Watermark>
-                        </xctk:WatermarkTextBox>
-
-                    </DockPanel>
 
                     <Button 
                         Name="btnFileDialog"
                         Background="Transparent"
                         Foreground="FloralWhite"
-                        Grid.Column="1"
                         FontSize="20"
                         Margin="3,3,3,3"
                         Click="btnFileDialog_Click">Open File
@@ -144,16 +83,15 @@
                         Name="btnSaveDialog"
                         Background="Transparent"
                         Foreground="FloralWhite"
-                        Grid.Column="1"
                         Grid.Row="1"
                         FontSize="20"
                         Margin="3,3,3,3"
-                        Click="btnSaveDialog_Click">Save File
+                        Click="btnSaveDialog_Click" >Save File
                     </Button>
 
                     <CheckBox 
                         Name="chkAutoSave"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Grid.RowSpan="2"
                         FontSize="20"
                         Foreground="FloralWhite"
@@ -217,12 +155,28 @@
                         SelectedColorChanged="cpHighLightColor_SelectedColorChanged">
                     </xctk:ColorPicker>
 
-
                 </Grid>
             </TabItem>
 
             <TabItem FontSize="15" Header="Text" Background="#FF5691D2" Foreground="FloralWhite">
                 <Grid>
+
+
+                    <Grid.Resources>
+
+                        <Style TargetType="{x:Type Button}" x:Key="formatFontStyle">
+                            <Setter Property="FontFamily" Value="Palatino Linotype"></Setter>
+                            <Setter Property="Width" Value="30"></Setter>
+                            <Setter Property="FontSize" Value ="14"></Setter>
+                            <Setter Property="CommandTarget" Value="{Binding ElementName=txt}"></Setter>
+                        </Style>
+
+                        <Style TargetType="{x:Type Button}" x:Key="formatAlingmentStyle">
+                            <Setter Property="Width" Value="30"></Setter>
+                            <Setter Property="CommandTarget" Value="{Binding ElementName=txt}"></Setter>
+                        </Style>
+
+                    </Grid.Resources>
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -272,40 +226,29 @@
                         Grid.Column="3"
                         Grid.Row="1">
 
-                        <Button
+                        <Button  
+                            Style="{StaticResource formatFontStyle}"
                             DockPanel.Dock="Left"
-                        FontWeight="Bold"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Grid.Column="3"
-                        Grid.Row="1"
-                        Click="ButtonStyle_Click">B
-                        </Button>
-                        
-                        <Button 
-                            DockPanel.Dock="Right"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Grid.Column="3"
-                        Grid.Row="1"
-                        Click="ButtonStyle_Click">
-                            <Underline>U</Underline>
-                        </Button>
-                        
-                        <Button 
-                        Width="18"
-                        FontStyle="Italic"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Grid.Column="3"
-                        Grid.Row="1"
-                        Click="ButtonStyle_Click">I
+                            Width="18" 
+                            Command="EditingCommands.ToggleBold">
+                            <TextBlock FontWeight="Bold">B</TextBlock>
                         </Button>
 
-                        
+                        <Button 
+                            Style="{StaticResource formatFontStyle}"
+                            DockPanel.Dock="Right"
+                            Width="18" 
+                            Command="EditingCommands.ToggleUnderline">
+                            <TextBlock TextDecorations="Underline" FontWeight="Bold">U</TextBlock>
+                        </Button>
+
+                        <Button 
+                            Style="{StaticResource formatFontStyle}"
+                            Width="18" 
+                            Command="EditingCommands.ToggleItalic">
+                            <TextBlock FontStyle="Italic" FontWeight="Bold">I</TextBlock>
+                        </Button>
+
 
                     </DockPanel>
 
@@ -315,36 +258,30 @@
                         Grid.Column="4"
                         Grid.Row="1">
 
-                        <Button 
+                        <Button
+                            Style="{StaticResource formatAlingmentStyle}"
+                            Width="18" 
+                            FontSize="20"
                             DockPanel.Dock="Left"
-                        FontSize="20"
-                        Width="18"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Grid.Column="4"
-                        Grid.Row="1"
-                        Click="ButtonAlignment_Click">L
+                            Command="EditingCommands.AlignLeft">L
                         </Button>
 
-                        
-                        <Button 
+                        <Button
+                            Style="{StaticResource formatAlingmentStyle}"
+                            Width="18" 
+                            FontSize="20"
                             DockPanel.Dock="Right"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left"
-                        Grid.Column="4"
-                        Grid.Row="1"
-                        Click="ButtonAlignment_Click">R
+                            Command="EditingCommands.AlignRight">R
                         </Button>
-                        
-                        <Button 
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Grid.Column="4"
-                        Grid.Row="1"
-                        Click="ButtonAlignment_Click">C
+
+                        <Button
+                            Style="{StaticResource formatAlingmentStyle}"
+                            Width="18" 
+                            FontSize="20"
+                            DockPanel.Dock="Left"
+                            Command="EditingCommands.AlignCenter">C
                         </Button>
+
 
 
                     </DockPanel>
@@ -355,19 +292,19 @@
         </TabControl>
 
 
-        <TextBox 
+        <RichTextBox 
             
             Name="txt" 
             Grid.Row="1"  
             FontSize="9"
             Margin="10"
             Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" TextChanged="txt_TextChanged">
-            <TextBox.Resources>
+            <RichTextBox.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="9"/>
                 </Style>
-            </TextBox.Resources>
-        </TextBox>
+            </RichTextBox.Resources>
+        </RichTextBox>
 
     </Grid>
 

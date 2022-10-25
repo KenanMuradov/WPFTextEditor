@@ -21,19 +21,7 @@ namespace WPFTextEditor
         private bool _isBold = false;
         private bool _isItalic = false;
         private bool _isUnderLined = false;
-        private string _tempStr = string.Empty;
 
-        public void CopyMethod(object sender, ExecutedRoutedEventArgs e) => _tempStr = txt.SelectedText;
-
-        public void PasteMethod(object sender, ExecutedRoutedEventArgs e)=> txt.Text.Insert(txt.SelectionStart, _tempStr);
-
-        public void SelectAllMethod(object sender, ExecutedRoutedEventArgs e) => txt.SelectAll();
-
-        public void CutMethod(object sender, ExecutedRoutedEventArgs e)
-        {
-            _tempStr = txt.SelectedText;
-            txt.Text.Remove(txt.SelectionStart, txt.SelectionLength);
-        }
 
         public MainWindow()
         {
@@ -64,7 +52,7 @@ namespace WPFTextEditor
             if (fileDialog.ShowDialog() is true)
             {
                 using StreamReader streamReader = new(fileDialog.FileName);
-                txt.Text = streamReader.ReadToEnd();
+                txt.Selection.Text = streamReader.ReadToEnd();
             }
 
         }
@@ -73,48 +61,18 @@ namespace WPFTextEditor
         {
             var saveFile = new SaveFileDialog();
 
+
+
             if (saveFile.ShowDialog() is true)
             {
+                txt.SelectAll();
                 using StreamWriter streamWriter = new(saveFile.FileName);
-                streamWriter.Write(txt.Text);
+                streamWriter.Write(txt.Selection);
             }
         }
 
 
-        private void btnFileSave_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtFileSave.Text))
-            {
-                MessageBox.Show("Enter File Name", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            File.WriteAllText($@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\{txtFileSave.Text}.txt", txt.Text);
-            MessageBox.Show("File Succesfully Saved", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            txtFileSave.Text = string.Empty;
-        }
-
-        private void btnFileLoad_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtFileLoad.Text))
-            {
-                MessageBox.Show("Load Path Cannot Be Empty", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-
-            var fileInfo = new FileInfo(txtFileLoad.Text);
-
-            if (fileInfo.Exists)
-            {
-                using StreamReader streamReader = new(fileInfo.FullName);
-                txt.Text = streamReader.ReadToEnd();
-                txtFileLoad.Text = string.Empty;
-                return;
-            }
-
-            MessageBox.Show("File Not Found", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
+        
 
         private void cpTextColor_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Windows.Media.Color?> e)
         {
@@ -122,10 +80,11 @@ namespace WPFTextEditor
 
             if (cpTextColor.SelectedColor is System.Windows.Media.Color color)
             {
-                if(txt.SelectionLength>0)
-                    txt.SelectionTextBrush = new SolidColorBrush(color);
+                if (txt.Selection.IsEmpty)
+                    txt.Foreground = new SolidColorBrush(cpTextColor.SelectedColor.Value);
+                else
+                    txt.Selection.ApplyPropertyValue(ForegroundProperty, new System.Windows.Media.SolidColorBrush(cpTextColor.SelectedColor.Value));
 
-                txt.Foreground = new SolidColorBrush(color);
             }
         }
 
@@ -141,9 +100,21 @@ namespace WPFTextEditor
                 txt.SelectionBrush = new SolidColorBrush(color);
         }
 
-        private void cBoxFontStyle_SelectionChanged(object sender, SelectionChangedEventArgs e) => txt.FontFamily = new System.Windows.Media.FontFamily(cBoxFontStyle.SelectedItem.ToString());
+        private void cBoxFontStyle_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (txt.Selection.IsEmpty)
+                txt.FontFamily = new System.Windows.Media.FontFamily(cBoxFontStyle.SelectedItem.ToString());
+            else
+                txt.Selection.ApplyPropertyValue(TextElement.FontFamilyProperty, new System.Windows.Media.FontFamily(cBoxFontStyle.SelectedItem.ToString()));
+        }
 
-        private void cBoxFontSize_SelectionChanged(object sender, SelectionChangedEventArgs e) => txt.FontSize = double.Parse(cBoxFontSize.SelectedItem.ToString()!);
+        private void cBoxFontSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (txt.Selection.IsEmpty)
+                txt.FontSize = double.Parse(cBoxFontSize.SelectedItem.ToString()!);
+            else
+                txt.Selection.ApplyPropertyValue(TextElement.FontSizeProperty, cBoxFontSize.SelectedItem.ToString());
+        }
 
         private void ButtonStyle_Click(object sender, RoutedEventArgs e)
         {
@@ -164,9 +135,17 @@ namespace WPFTextEditor
                         break;
                 }
 
-                txt.FontWeight = _isBold ? FontWeights.Bold : FontWeights.Normal;
-                txt.FontStyle = _isItalic ? FontStyles.Italic : FontStyles.Normal;
-                txt.TextDecorations = _isUnderLined ? TextDecorations.Underline : txt.TextDecorations = null;
+                if (txt.Selection.IsEmpty)
+                {
+                    txt.FontWeight = _isBold ? FontWeights.Bold : FontWeights.Normal;
+                    txt.FontStyle = _isItalic ? FontStyles.Italic : FontStyles.Normal;
+                }
+                else
+                {
+                    txt.Selection.ApplyPropertyValue(TextElement.FontWeightProperty, _isBold ? FontWeights.Bold : FontWeights.Normal);
+                    txt.Selection.ApplyPropertyValue(TextElement.FontStyleProperty, _isItalic ? FontStyles.Italic : FontStyles.Normal);
+                }
+
             }
 
         }
@@ -175,12 +154,11 @@ namespace WPFTextEditor
         {
             if (sender is Button btn)
             {
-                txt.TextAlignment = btn.Content.ToString() switch
+                txt.HorizontalContentAlignment = btn.Content.ToString() switch
                 {
-                    "L" => TextAlignment.Left,
-                    "C" => TextAlignment.Center,
-                    "R" => TextAlignment.Right,
-                    _ => txt.TextAlignment
+                    "C" => HorizontalAlignment.Center,
+                    "R" => HorizontalAlignment.Right,
+                    _ => HorizontalAlignment.Left,
                 };
 
             }
@@ -191,7 +169,7 @@ namespace WPFTextEditor
             if (_isAutoSaveUsed == false)
             {
 
-                var result = MessageBox.Show("Tour Text Will be automatically saved on Desktop with Name KepaText.txt \nDo you accept It?","Information",MessageBoxButton.YesNo,MessageBoxImage.Question);
+                var result = MessageBox.Show("Tour Text Will be automatically saved on Desktop with Name KepaText.txt \nDo you accept It?", "Information", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -210,7 +188,9 @@ namespace WPFTextEditor
             if (chkAutoSave.IsChecked == null || chkAutoSave.IsChecked == false)
                 return;
 
-            File.WriteAllText(@$"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\KepaText.txt", txt.Text);
+            txt.SelectAll();
+
+            File.WriteAllText(@$"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\KepaText.txt", txt.Selection.Text);
 
         }
     }
